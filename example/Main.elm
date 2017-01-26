@@ -33,7 +33,9 @@ init =
 
 initModel : Model
 initModel =
-    { time = 0, toast = Toast.init }
+    { time = 0
+    , toast = Toast.initWithTransitionDelay 2
+    }
 
 
 
@@ -117,4 +119,4 @@ view model =
 
 notificationView : Toast.NotificationState -> String -> Html Msg
 notificationView state string =
-    Html.li [] [ Html.text string ]
+    Html.li [] [ Html.text (string ++ " | " ++ toString state) ]
