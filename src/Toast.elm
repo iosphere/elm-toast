@@ -156,7 +156,7 @@ type InternalNotificationState
 
 notificationState : Time -> Types.InternalConfig -> Notification a -> InternalNotificationState
 notificationState time config notification =
-    case Debug.log "checkingState for" notification of
+    case notification of
         Types.Notification internalNotification ->
             if internalNotification.startTime > time then
                 -- Future notification
