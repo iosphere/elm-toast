@@ -35,7 +35,7 @@ should be represented in your view.
 
 # Minimal implementation
 
-You model should contain the current time and the Toast somewhere in your model.
+Your app should contain the current time and the Toast somewhere in its model.
 
     type alias Model =
         { time : Time
