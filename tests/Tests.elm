@@ -13,22 +13,22 @@ all =
 
 notificationValid : Toast.Notification String
 notificationValid =
-    Toast.createNotification "Valid" 0 110
+    Toast.createNotification "Valid" 110
 
 
 notificationValidNow : Toast.Notification String
 notificationValidNow =
-    Toast.createNotification "Now" 75 100
+    Toast.createFutureNotification 75 "Now" 100
 
 
 notificationFuture : Toast.Notification String
 notificationFuture =
-    Toast.createNotification "Future" 200 300
+    Toast.createFutureNotification 200 "Future" 300
 
 
 notificationPast : Toast.Notification String
 notificationPast =
-    Toast.createNotification "Past" 0 50
+    Toast.createNotification "Past" 50
 
 
 toast : Float -> Toast.Toast String

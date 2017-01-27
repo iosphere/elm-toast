@@ -1,20 +1,11 @@
 module Main exposing (..)
 
 import Html exposing (Html)
+import Html.Attributes exposing (class, classList)
 import Html.Events exposing (onClick)
-import Time exposing (Time, second)
+import Html.Keyed
+import Time exposing (Time)
 import Toast exposing (Toast)
-
-
-main : Program Never Model Msg
-main =
-    Html.program
-        { init = init
-        , view = view
-        , update = update
-        , subscriptions = subscriptions
-        }
-
 
 
 -- MODEL
@@ -22,7 +13,7 @@ main =
 
 type alias Model =
     { time : Time
-    , toast : Toast String
+    , toast : Toast AppNotification
     }
 
 
@@ -33,8 +24,20 @@ init =
 
 initModel : Model
 initModel =
-    { time = 0
-    , toast = Toast.initWithTransitionDelay 2
+    { -- Ideally your implementation should start with the correct time.
+      -- To avoid flags we start with 0 and wait for the first update.
+      time = 0
+    , -- initialize toast with a delay of 1.5 seconds. This is the duration
+      -- for which notifications will remain "active" and in the DOM after their
+      -- expiration. Their state will be `Toast.Hiding` and will give the css
+      -- transition enough time to complete before removing the DOM element.
+      toast = Toast.initWithTransitionDelay (Time.second * 1.5)
+    }
+
+
+type alias AppNotification =
+    { message : String
+    , important : Bool
     }
 
 
@@ -44,41 +47,44 @@ initModel =
 
 type Msg
     = Tick Time
-    | Postnotification String
+    | Postnotification AppNotification
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    pureUpdate msg model ! []
+
+
+pureUpdate : Msg -> Model -> Model
+pureUpdate msg model =
     case msg of
         Tick newTime ->
             let
                 newToast =
-                    Toast.update newTime model.toast
+                    Toast.updateTimestamp newTime model.toast
             in
-                (updateTime newTime model
+                updateTime newTime model
                     |> updateToast newToast
-                )
-                    ! []
 
-        Postnotification string ->
+        Postnotification notification ->
             let
-                newNotification =
-                    Toast.createNotification string startTime expirationTime
-
                 startTime =
                     -- Show immediately
                     0
 
                 expirationTime =
-                    model.time + Time.second * 5
+                    (model.time + Time.second * 3)
+
+                newToastNotification =
+                    Toast.createFutureNotification startTime notification expirationTime
 
                 newToast =
-                    Toast.addNotification newNotification model.toast
+                    Toast.addNotification newToastNotification model.toast
             in
-                (updateToast newToast model) ! []
+                updateToast newToast model
 
 
-updateToast : Toast String -> Model -> Model
+updateToast : Toast AppNotification -> Model -> Model
 updateToast toast model =
     { model | toast = toast }
 
@@ -94,7 +100,7 @@ updateTime time model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every second Tick
+    Time.every (Time.millisecond * 500) Tick
 
 
 
@@ -109,14 +115,46 @@ view model =
                 |> Html.text
     in
         Html.div []
-            [ Html.button [ onClick (Postnotification "Hello") ] [ Html.text "Post notification" ]
-            , Html.div []
-                [ Html.h1 [] [ Html.text "Notifications" ]
-                , Html.ul [] (Toast.views model.toast model.time notificationView)
-                ]
+            (boilerPlateView
+                ++ [ notificationsView model ]
+            )
+
+
+notificationsView : Model -> Html Msg
+notificationsView model =
+    Html.Keyed.ul [ class "notifications-list" ] (Toast.keyedViews model.toast model.time notificationView)
+
+
+notificationView : Toast.NotificationState -> AppNotification -> Html Msg
+notificationView state notification =
+    Html.li
+        [ classList
+            [ ( "notification", True )
+            , ( "notification--important", notification.important )
+            , ( "notification--hidden", (state == Toast.Hiding) )
             ]
+        ]
+        [ Html.div [ class "notification__content" ] [ Html.text (notification.message ++ " | " ++ toString state) ] ]
 
 
-notificationView : Toast.NotificationState -> String -> Html Msg
-notificationView state string =
-    Html.li [] [ Html.text (string ++ " | " ++ toString state) ]
+
+-- BOILERPLATE
+
+
+main : Program Never Model Msg
+main =
+    Html.program
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
+
+
+boilerPlateView : List (Html Msg)
+boilerPlateView =
+    [ Html.node "link" [ Html.Attributes.rel "stylesheet", Html.Attributes.href "style.css" ] []
+    , Html.button [ onClick (Postnotification (AppNotification "This is important" True)) ] [ Html.text "Post import notification" ]
+    , Html.button [ onClick (Postnotification (AppNotification "Not so important" False)) ] [ Html.text "Post normal notification" ]
+    , Html.h1 [] [ Html.text "Notifications" ]
+    ]

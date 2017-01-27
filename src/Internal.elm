@@ -18,6 +18,11 @@ listAllNotifications (Toast toast) =
     toast.notifications
 
 
+member : Notification a -> Toast a -> Bool
+member notification (Toast internalToast) =
+    List.member notification internalToast.notifications
+
+
 sanityCheck : Notification a -> Bool
 sanityCheck (Notification notification) =
     notification.startTime < notification.expirationTime

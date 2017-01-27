@@ -1,0 +1,32 @@
+.notifications-list {
+    list-style-type: none;
+    margin-left: 0;
+    padding-left: 0;
+    max-width: 500px;
+}
+
+.notification {
+    position: relative;
+    overflow: hidden;
+    height: 40px;
+
+    background-color: green;
+    color: white;
+
+    transition: height 0.75s ease, opacity 1s ease;
+    margin-top: 1px;
+}
+
+.notification--important {
+    font-weight: bold;
+    background-color: red;
+}
+
+.notification--hidden {
+    opacity: 0;
+    height: 0;
+}
+
+.notification__content {
+    padding: 10px;
+}
