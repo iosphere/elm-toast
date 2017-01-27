@@ -71,7 +71,7 @@ init =
 
 
 {-| -}
-initWithTransitionDelay : Float -> Toast a
+initWithTransitionDelay : Time -> Toast a
 initWithTransitionDelay delay =
     Types.Toast (Types.InternalToast (Types.InternalConfig delay) [])
 
@@ -99,10 +99,8 @@ addNotification notification toast =
 
 {-| -}
 listActiveNotifications : Toast a -> Time -> List (Notification a)
-listActiveNotifications toast time =
-    case toast of
-        Types.Toast internalToast ->
-            filterActiveNotifications time internalToast.config internalToast.notifications
+listActiveNotifications (Types.Toast toast) time =
+    filterActiveNotifications time toast.config toast.notifications
 
 
 {-| -}
@@ -113,21 +111,7 @@ views toast time viewFunc =
             Internal.config toast
     in
         Internal.listAllNotifications toast
-            |> List.filterMap
-                (\notification ->
-                    case notification of
-                        Types.Notification internalNotification ->
-                            case notificationState time config notification of
-                                Active externalState ->
-                                    viewFunc externalState internalNotification.message
-                                        |> Just
-
-                                Inactive ->
-                                    Nothing
-
-                                Past ->
-                                    Nothing
-                )
+            |> List.filterMap (view config time viewFunc)
 
 
 
@@ -136,12 +120,10 @@ views toast time viewFunc =
 
 {-| -}
 update : Time -> Toast a -> Toast a
-update time toast =
-    case toast of
-        Types.Toast internalToast ->
-            Internal.listAllNotifications toast
-                |> filterValidNotifications time internalToast.config
-                |> Internal.updateNotifications toast
+update time ((Types.Toast internalToast) as toast) =
+    Internal.listAllNotifications toast
+        |> filterValidNotifications time internalToast.config
+        |> Internal.updateNotifications toast
 
 
 
@@ -188,3 +170,17 @@ filterActiveNotifications time config =
                 _ ->
                     False
         )
+
+
+view : Types.InternalConfig -> Time -> (NotificationState -> a -> viewType) -> Types.Notification a -> Maybe viewType
+view config time viewFunc ((Types.Notification internalNotification) as notification) =
+    case notificationState time config notification of
+        Active externalState ->
+            viewFunc externalState internalNotification.message
+                |> Just
+
+        Inactive ->
+            Nothing
+
+        Past ->
+            Nothing

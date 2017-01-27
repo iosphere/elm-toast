@@ -12,7 +12,7 @@ type Notification a
 
 
 type alias InternalConfig =
-    { hideTransitionDelay : Float
+    { hideTransitionDelay : Time
     }
 
 

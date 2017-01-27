@@ -4,29 +4,20 @@ import Types exposing (..)
 
 
 updateNotifications : Toast a -> List (Notification a) -> Toast a
-updateNotifications toast list =
-    case toast of
-        Toast internalToast ->
-            Toast
-                { internalToast | notifications = list }
+updateNotifications (Toast toast) list =
+    Toast { toast | notifications = list }
 
 
 config : Toast a -> InternalConfig
-config toast =
-    case toast of
-        Toast internalToast ->
-            internalToast.config
+config (Toast toast) =
+    toast.config
 
 
 listAllNotifications : Toast a -> List (Notification a)
-listAllNotifications toast =
-    case toast of
-        Toast internalToast ->
-            internalToast.notifications
+listAllNotifications (Toast toast) =
+    toast.notifications
 
 
 sanityCheck : Notification a -> Bool
-sanityCheck notification =
-    case notification of
-        Notification internalNotification ->
-            internalNotification.startTime < internalNotification.expirationTime
+sanityCheck (Notification notification) =
+    notification.startTime < notification.expirationTime
