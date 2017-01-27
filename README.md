@@ -14,7 +14,7 @@ of your apps responsibility. The concept of this package is that it does not
 impose any view or design concept on your app (it does not even have
 to be Html).
 
-![Screenshot of elm-toast example](https://github.com/iosphere/elm-logger/raw/master/screenshot.png)
+![Screenshot of elm-toast example](https://github.com/iosphere/elm-toast/raw/master/screenshot.png)
 
 # Minimal implementation
 
