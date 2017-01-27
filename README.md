@@ -7,6 +7,8 @@ in your elm app. This module takes care of updating the notifications and let's
 you decide what content should be included in your notifications and how these
 should be represented in your view.
 
+A demo can be found here: https://runelm.io/c/uh4
+
 # Screenshot
 
 This is a screenshot of the [example app](example/Main.elm). The design is part
