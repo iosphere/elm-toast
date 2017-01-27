@@ -12,8 +12,8 @@ A demo can be found here: https://runelm.io/c/uh4
 # Screenshot
 
 This is a screenshot of the [example app](example/Main.elm). The design is part
-of your apps responsibility. The concept of this package is that it does not
-impose any view or design concept on your app (it does not even have
+of your app's responsibility. The concept of this package is that it does not
+impose any view type or design on your app (it does not even require views
 to be Html).
 
 ![Screenshot of elm-toast example](https://github.com/iosphere/elm-toast/raw/master/screenshot.png)
