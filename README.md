@@ -7,7 +7,7 @@ in your elm app. This module takes care of updating the notifications and let's
 you decide what content should be included in your notifications and how these
 should be represented in your view.
 
-A [demo](https://ellie-app.com/3rkbwjFF6KBa1) can be found here: https://ellie-app.com/3rkbwjFF6KBa1
+A [demo](https://ellie-app.com/3rkbwjFF6KBa1/0) can be found here: https://ellie-app.com/3rkbwjFF6KBa1/0
 
 # Screenshot
 
